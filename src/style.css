@@ -1,30 +1,21 @@
 @layer utilities {
-    .animate-in {
-        animation: animateIn 0.8s ease-out forwards;
-    }
 
-    .delay-100 {
-        animation-delay: 100ms;
-    }
-
-    .delay-200 {
-        animation-delay: 200ms;
-    }
-
-    .delay-300 {
-        animation-delay: 300ms;
-    }
-}
-
-@keyframes animateIn {
-    from {
+    /* Base reveal state - elements are hidden initially to prevent flash */
+    .animate-on-scroll,
+    #skills .p-8,
+    #projects .group,
+    .p-6.bg-light-surface,
+    section h2 {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        will-change: transform, opacity;
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    /* Fallback class if JS fails */
+    .reveal-fallback {
+        opacity: 1 !important;
+        transform: none !important;
     }
 }
 
@@ -64,41 +55,42 @@ section {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Aurora Orbs */
+/* Aurora Orbs - Enhanced for "Pop" */
 .aurora-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
+    filter: blur(100px);
+    opacity: 0.25;
     z-index: -1;
+    pointer-events: none;
 }
 
 .dark .aurora-orb {
-    opacity: 0.1;
+    opacity: 0.15;
 }
 
 .aurora-1 {
-    width: 400px;
-    height: 400px;
+    width: 450px;
+    height: 450px;
     background: radial-gradient(circle, #4285F4, transparent);
-    top: -10%;
-    left: -10%;
+    top: -5%;
+    left: -5%;
 }
 
 .aurora-2 {
-    width: 600px;
-    height: 600px;
+    width: 650px;
+    height: 650px;
     background: radial-gradient(circle, #818CF8, transparent);
-    bottom: -20%;
-    right: -10%;
+    bottom: -15%;
+    right: -5%;
 }
 
 .aurora-3 {
-    width: 500px;
-    height: 500px;
+    width: 550px;
+    height: 550px;
     background: radial-gradient(circle, #10B981, transparent);
-    top: 40%;
-    left: 40%;
+    top: 35%;
+    left: 35%;
 }
 
 /* Gradient Text */
@@ -108,6 +100,7 @@ section {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: gradient-flow 8s linear infinite;
+    display: inline-block;
 }
 
 @keyframes gradient-flow {
@@ -124,16 +117,13 @@ section {
     height: 100%;
     z-index: 1;
     pointer-events: none;
-    /* Let clicks pass through to content */
     will-change: transform;
 }
 
-.animate-on-scroll,
-#skills .p-8,
-#projects .group,
-.p-6.bg-light-surface,
-section h2 {
-    will-change: transform, opacity;
+/* Specific start state for Hero elements for GSAP orchestration */
+#hero h1,
+#hero p,
+#hero .flex-wrap {
+    opacity: 0;
+    transform: translateY(40px);
 }
-
-/* Three.js canvas should handle mouse events via window, so pointer-events none is fine for the canvas element itself */

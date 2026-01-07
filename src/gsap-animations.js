@@ -1,90 +1,103 @@
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
-// Global ScrollTrigger Configuration for Mobile
+// Global ScrollTrigger Configuration
 ScrollTrigger.config({
     limitCallbacks: true,
-    ignoreMobileResize: true // Prevent jumpy behavior on mobile address bar hide/show
+    ignoreMobileResize: true
 });
 
-// Handle mobile scroll normalization
+// Handle mobile scroll normalization for smoother experience on touch devices
 if (ScrollTrigger.isTouch) {
     ScrollTrigger.normalizeScroll(true);
 }
 
 class PortfolioAnimations {
     constructor() {
-        console.log("Initializing Portfolio Animations...");
-        this.initHero();
-        this.initReveals();
-        this.initExperienceTimeline();
-        this.initSkillInteractions();
-        this.initStatsCounter();
+        console.log("🚀 Portfolio Animations: Initializing...");
+        this.mm = gsap.matchMedia();
+        this.init();
+    }
 
-        // Refresh ScrollTrigger after a short delay to ensure layout is settled
+    init() {
+        // Run specific animations based on screen size
+        this.mm.add({
+            isDesktop: "(min-width: 1024px)",
+            isMobile: "(max-width: 1023px)"
+        }, (context) => {
+            let { isDesktop, isMobile } = context.conditions;
+
+            this.initHero(isMobile);
+            this.initReveals(isMobile);
+            this.initExperienceTimeline(isMobile);
+            this.initSkillInteractions();
+            this.initStatsCounter();
+            this.initAuroraAnimation();
+
+            return () => {
+                // Cleanup logic if needed when switching media queries
+            };
+        });
+
+        // Global refresh after everything is loaded
         window.addEventListener('load', () => {
             setTimeout(() => {
                 ScrollTrigger.refresh();
-                console.log("ScrollTrigger refreshed after load");
+                console.log("✅ ScrollTrigger Refreshed");
             }, 500);
         });
 
-        // Global resize debounced refresh
+        // Debounced resize refresh
         let resizeTimer;
         window.addEventListener("resize", () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                ScrollTrigger.refresh();
-            }, 250);
+            resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 250);
         });
     }
 
-    initHero() {
-        const tl = gsap.timeline();
+    initHero(isMobile) {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-        tl.from("#hero h1", {
-            y: 50,
-            opacity: 0,
-            duration: 1.2,
-            ease: "power4.out"
+        tl.to("#hero h1", {
+            y: 0,
+            opacity: 1,
+            duration: isMobile ? 1 : 1.2,
         })
-            .from("#hero p", {
-                y: 30,
-                opacity: 0,
+            .to("#hero p", {
+                y: 0,
+                opacity: 1,
                 duration: 0.8,
-                ease: "power2.out"
             }, "-=0.8")
-            .from("#hero .flex-wrap a", {
-                scale: 0.8,
-                opacity: 0,
-                duration: 0.5,
-                stagger: 0.2,
-                ease: "back.out(1.7)"
+            .to("#hero .flex-wrap", {
+                y: 0,
+                opacity: 1,
+                duration: 0.6,
             }, "-=0.4");
+
+        // Background canvas fade in
+        gsap.to("#hero-canvas", { opacity: 0.6, duration: 2, delay: 0.5 });
     }
 
-    initReveals() {
-        // More robust reveal logic: animate elements individually as they enter the viewport
+    initReveals(isMobile) {
         const revealElements = document.querySelectorAll(".animate-on-scroll, section h2, #skills .p-8, #projects .group, .p-6.bg-light-surface");
 
         revealElements.forEach((el, i) => {
-            gsap.from(el, {
+            gsap.to(el, {
                 scrollTrigger: {
                     trigger: el,
-                    start: "top 90%",
+                    start: isMobile ? "top 95%" : "top 85%", // Trigger earlier on mobile
                     toggleActions: "play none none none"
                 },
-                y: 30,
-                opacity: 0,
+                y: 0,
+                opacity: 1,
                 duration: 0.8,
-                delay: (i % 3) * 0.1, // Slight stagger for grid items
-                ease: "power2.out",
-                clearProps: "all" // Important: ensure JS doesn't lock properties after animation
+                delay: isMobile ? 0 : (i % 3) * 0.1, // Less stagger on mobile for snappiness
+                clearProps: "transform" // Keep opacity but clear the transform for better layout
             });
         });
     }
 
-    initExperienceTimeline() {
+    initExperienceTimeline(isMobile) {
         const experienceSection = document.querySelector("#experience");
         if (!experienceSection) return;
 
@@ -92,63 +105,58 @@ class PortfolioAnimations {
         const dots = experienceSection.querySelectorAll(".rounded-full");
 
         timelineLines.forEach((line) => {
-            gsap.from(line, {
-                scaleY: 0,
-                transformOrigin: "top center",
-                scrollTrigger: {
-                    trigger: line,
-                    start: "top 80%",
-                    end: "bottom 60%",
-                    scrub: 1
+            gsap.fromTo(line,
+                { scaleY: 0 },
+                {
+                    scaleY: 1,
+                    transformOrigin: "top center",
+                    scrollTrigger: {
+                        trigger: line,
+                        start: "top 80%",
+                        end: "bottom 60%",
+                        scrub: 1
+                    }
                 }
-            });
+            );
         });
 
         dots.forEach(dot => {
-            gsap.from(dot, {
-                scale: 0,
-                opacity: 0,
-                duration: 0.5,
+            gsap.to(dot, {
+                opacity: 1,
+                scale: 1,
                 scrollTrigger: {
                     trigger: dot,
                     start: "top 85%",
-                    toggleActions: "play none none reverse"
+                    toggleActions: "play none none none"
                 }
             });
         });
     }
 
     initSkillInteractions() {
-        // "Data Stream" interaction for skill cards with category-specific colors
         const categories = document.querySelectorAll("#skills .grid > div");
 
         const skillColors = {
-            "Google Cloud": "rgba(66, 133, 244, 0.5)", // Blue
-            "Agentic AI": "rgba(168, 85, 247, 0.5)",   // Purple
-            "DevOps & Infra": "rgba(16, 185, 129, 0.5)" // Green
+            "Google Cloud": "rgba(66, 133, 244, 0.5)",
+            "Agentic AI": "rgba(168, 85, 247, 0.5)",
+            "DevOps & Infra": "rgba(16, 185, 129, 0.5)"
         };
 
         categories.forEach(category => {
             const title = category.querySelector("h3")?.innerText;
             const glowColor = skillColors[title] || "rgba(66, 133, 244, 0.5)";
             const listItems = category.querySelectorAll("li");
-            const icon = category.querySelector("img, i");
 
             category.addEventListener("mouseenter", () => {
                 gsap.to(category, {
                     y: -8,
                     borderColor: glowColor,
                     boxShadow: `0 25px 50px -12px ${glowColor.replace('0.5', '0.3')}`,
-                    duration: 0.4,
-                    ease: "power2.out"
+                    duration: 0.4
                 });
 
-                if (icon) {
-                    gsap.to(icon, { rotate: 12, scale: 1.2, duration: 0.3 });
-                }
-
                 gsap.to(listItems, {
-                    x: 12,
+                    x: 10,
                     color: glowColor.replace('0.5', '1'),
                     stagger: 0.05,
                     duration: 0.2
@@ -163,45 +171,12 @@ class PortfolioAnimations {
                     duration: 0.4
                 });
 
-                if (icon) {
-                    gsap.to(icon, { rotate: 0, scale: 1, duration: 0.3 });
-                }
-
                 gsap.to(listItems, {
                     x: 0,
                     color: "",
                     stagger: 0.05,
                     duration: 0.2
                 });
-            });
-        });
-
-        // Aurora Orbs Animation
-        gsap.to(".aurora-orb", {
-            x: "random(-100, 100)",
-            y: "random(-100, 100)",
-            duration: "random(10, 20)",
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut",
-            stagger: 2
-        });
-
-        // "Code Glint" for certifications
-        const certs = document.querySelectorAll(".p-6.bg-light-surface");
-        certs.forEach(cert => {
-            cert.style.position = "relative";
-            cert.style.overflow = "hidden";
-
-            const glint = document.createElement("div");
-            glint.className = "absolute top-0 left-[-150%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] pointer-events-none";
-            cert.appendChild(glint);
-
-            cert.addEventListener("mouseenter", () => {
-                gsap.fromTo(glint,
-                    { left: "-150%" },
-                    { left: "150%", duration: 0.8, ease: "power2.inOut" }
-                );
             });
         });
     }
@@ -212,7 +187,7 @@ class PortfolioAnimations {
         stats.forEach(stat => {
             const text = stat.innerText;
             const numericValue = parseFloat(text.replace(/[^\d.]/g, ''));
-            const suffix = text.replace(/[\d.\s]/g, ''); // Keep TB, %, etc.
+            const suffix = text.replace(/[\d.\s]/g, '');
 
             const obj = { count: 0 };
 
@@ -222,19 +197,33 @@ class PortfolioAnimations {
                     trigger: stat,
                     start: "top 95%",
                 },
-                duration: 2.5,
-                ease: "power2.out",
+                duration: 2,
                 onUpdate: () => {
                     stat.innerText = Math.round(obj.count) + (suffix ? " " + suffix : "");
                 }
             });
         });
     }
+
+    initAuroraAnimation() {
+        gsap.to(".aurora-orb", {
+            x: "random(-100, 100)",
+            y: "random(-50, 50)",
+            duration: "random(15, 25)",
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            stagger: {
+                each: 5,
+                from: "random"
+            }
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait slightly for Three.js to initialize if needed
+    // Small delay to ensure Three.js starts first if present
     setTimeout(() => {
         window.portfolioAnims = new PortfolioAnimations();
-    }, 100);
+    }, 150);
 });

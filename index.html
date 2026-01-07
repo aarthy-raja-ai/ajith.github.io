@@ -88,14 +88,17 @@
         }
     </style>
     <script>
-        // Emergency Fallback: If animations haven't triggered after 3s, force visibility
+        // Emergency Fallback: If animations haven't triggered after 2s, force visibility
+        // This is a safety net for local dev and specific browser glitches.
         setTimeout(() => {
-            document.querySelectorAll('.animate-on-scroll, section h2, .p-8, .group, .p-6').forEach(el => {
-                if (window.getComputedStyle(el).opacity === "0") {
+            document.querySelectorAll('.animate-on-scroll, section h2, #skills .p-8, #projects .group, .p-6.bg-light-surface').forEach(el => {
+                const opacity = window.getComputedStyle(el).opacity;
+                if (opacity === "0") {
+                    console.warn("Animation fallback triggered for:", el);
                     el.classList.add('reveal-fallback');
                 }
             });
-        }, 3000);
+        }, 2000);
     </script>
 </head>
 
@@ -156,21 +159,20 @@
                         Senior GCP Data Engineer
                     </span>
                 </div>
-                <h1 class="text-4xl md:text-7xl font-bold mb-6 text-light-text dark:text-dark-text leading-tight animate-in break-words"
-                    style="animation-delay: 100ms">
+                <h1
+                    class="text-4xl md:text-7xl font-bold mb-6 text-light-text dark:text-dark-text leading-tight break-words">
                     Building Scalable <br />
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
                         Data Infrastructures
                     </span>
                     at Enterprise Scale.
                 </h1>
-                <p class="text-lg md:text-xl text-dark-secondary dark:text-dark-secondary max-w-2xl mb-10 animate-in"
-                    style="animation-delay: 200ms">
+                <p class="text-lg md:text-xl text-dark-secondary dark:text-dark-secondary max-w-2xl mb-10">
                     Product-driven Data Engineer with 6+ years of experience specializing in BigQuery, Cloud Run, and
                     Agentic AI architectures. Transforming complex data challenges into cost-efficient, GCP-native
                     solutions.
                 </p>
-                <div class="flex flex-wrap gap-4 animate-in" style="animation-delay: 300ms">
+                <div class="flex flex-wrap gap-4">
                     <a href="mailto:ajithkumargcp@gmail.com"
                         class="px-8 py-4 bg-dark-accent text-dark-text dark:text-white font-semibold rounded-xl hover:shadow-glow transition-all flex items-center">
                         Let's Talk
