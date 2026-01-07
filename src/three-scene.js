@@ -43,25 +43,40 @@ class DataNexus3D {
 
         this.camera.position.z = 5;
 
-        const particleCount = 1000;
+        // GCP Colors: Blue, Red, Yellow, Green
+        this.gcpColors = [
+            new THREE.Color(0x4285F4), // Blue
+            new THREE.Color(0xEA4335), // Red
+            new THREE.Color(0xFBBC04), // Yellow
+            new THREE.Color(0x34A853)  // Green
+        ];
+
+        const particleCount = 1200;
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
         const sizes = new Float32Array(particleCount);
 
-        for (let i = 0; i < particleCount * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 15;
-        }
-
         for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 15;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 15;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
+
+            const color = this.gcpColors[Math.floor(Math.random() * this.gcpColors.length)];
+            colors[i * 3] = color.r;
+            colors[i * 3 + 1] = color.g;
+            colors[i * 3 + 2] = color.b;
+
             sizes[i] = Math.random() * 2;
         }
 
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
         geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
         const material = new THREE.PointsMaterial({
-            size: 0.05,
-            color: this.isDarkMode() ? this.colors.dark.particle : this.colors.light.particle,
+            size: 0.04,
+            vertexColors: true,
             transparent: true,
             opacity: this.isDarkMode() ? 0.8 : 0.4,
             blending: THREE.AdditiveBlending
@@ -71,9 +86,9 @@ class DataNexus3D {
         this.scene.add(this.particles);
 
         // Add connections (Lines)
-        const lineCount = 100;
+        const lineCount = 120;
         const lineGeometry = new THREE.BufferGeometry();
-        const linePositions = new Float32Array(lineCount * 6); // 2 points per line
+        const linePositions = new Float32Array(lineCount * 6);
 
         for (let i = 0; i < lineCount * 6; i++) {
             linePositions[i] = (Math.random() - 0.5) * 15;
@@ -84,7 +99,8 @@ class DataNexus3D {
         const lineMaterial = new THREE.LineBasicMaterial({
             color: this.isDarkMode() ? this.colors.dark.line : this.colors.light.line,
             transparent: true,
-            opacity: this.isDarkMode() ? 0.2 : 0.05
+            opacity: this.isDarkMode() ? 0.3 : 0.1,
+            blending: THREE.AdditiveBlending
         });
 
         this.lines = new THREE.LineSegments(lineGeometry, lineMaterial);

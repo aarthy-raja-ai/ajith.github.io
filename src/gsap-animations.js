@@ -119,29 +119,37 @@ class PortfolioAnimations {
     }
 
     initSkillInteractions() {
-        // "Data Stream" interaction for skill cards
+        // "Data Stream" interaction for skill cards with category-specific colors
         const categories = document.querySelectorAll("#skills .grid > div");
 
+        const skillColors = {
+            "Google Cloud": "rgba(66, 133, 244, 0.5)", // Blue
+            "Agentic AI": "rgba(168, 85, 247, 0.5)",   // Purple
+            "DevOps & Infra": "rgba(16, 185, 129, 0.5)" // Green
+        };
+
         categories.forEach(category => {
+            const title = category.querySelector("h3")?.innerText;
+            const glowColor = skillColors[title] || "rgba(66, 133, 244, 0.5)";
             const listItems = category.querySelectorAll("li");
             const icon = category.querySelector("img, i");
 
             category.addEventListener("mouseenter", () => {
                 gsap.to(category, {
-                    y: -5,
-                    borderColor: "rgba(66, 133, 244, 0.5)",
-                    boxShadow: "0 20px 40px -20px rgba(66, 133, 244, 0.3)",
+                    y: -8,
+                    borderColor: glowColor,
+                    boxShadow: `0 25px 50px -12px ${glowColor.replace('0.5', '0.3')}`,
                     duration: 0.4,
                     ease: "power2.out"
                 });
 
                 if (icon) {
-                    gsap.to(icon, { rotate: 10, scale: 1.1, duration: 0.3 });
+                    gsap.to(icon, { rotate: 12, scale: 1.2, duration: 0.3 });
                 }
 
                 gsap.to(listItems, {
-                    x: 10,
-                    color: document.documentElement.classList.contains('dark') ? "#4285F4" : "#1A73E8",
+                    x: 12,
+                    color: glowColor.replace('0.5', '1'),
                     stagger: 0.05,
                     duration: 0.2
                 });
@@ -166,6 +174,17 @@ class PortfolioAnimations {
                     duration: 0.2
                 });
             });
+        });
+
+        // Aurora Orbs Animation
+        gsap.to(".aurora-orb", {
+            x: "random(-100, 100)",
+            y: "random(-100, 100)",
+            duration: "random(10, 20)",
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            stagger: 2
         });
 
         // "Code Glint" for certifications
