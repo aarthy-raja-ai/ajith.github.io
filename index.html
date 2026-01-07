@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajithkumar J | Senior GCP Data Engineer</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/google-cloud.png">
+    <!-- Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#0B0F19',
+                            surface: '#111827',
+                            card: '#0F172A',
+                            text: '#E5E7EB',
+                            secondary: '#9CA3AF',
+                            accent: '#4285F4'
+                        },
+                        light: {
+                            bg: '#F9FAFB',
+                            surface: '#FFFFFF',
+                            card: '#FFFFFF',
+                            text: '#111827',
+                            secondary: '#4B5563',
+                            accent: '#1A73E8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'glow': '0 0 15px -3px rgba(66, 133, 244, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- GSAP & Three.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+
+        .light .bg-grid {
+            background-image:
+                linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+        }
+
+        /* Essential Reveal Fallback */
+        .reveal-fallback {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+    </style>
+    <script>
+        // Emergency Fallback: If animations haven't triggered after 3s, force visibility
+        setTimeout(() => {
+            document.querySelectorAll('.animate-on-scroll, section h2, .p-8, .group, .p-6').forEach(el => {
+                if (window.getComputedStyle(el).opacity === "0") {
+                    el.classList.add('reveal-fallback');
+                }
+            });
+        }, 3000);
+    </script>
+</head>
+
+<body
+    class="bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text font-sans transition-colors duration-300 overflow-x-hidden">
+    <!-- Grid Overlay -->
+    <div class="fixed inset-0 bg-grid pointer-events-none z-0"></div>
+
+    <!-- Header -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent">
+        <nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="text-xl font-bold tracking-tight text-light-text dark:text-dark-text shrink-0">
+                Ajithkumar <span class="text-dark-accent">J</span>
+            </div>
+
+            <!-- Unified Navigation (Adapts for mobile) -->
+            <div class="flex items-center space-x-4 md:space-x-8 text-sm font-medium">
+                <div class="hidden md:flex items-center space-x-4 md:space-x-8 overflow-x-auto no-scrollbar py-2">
+                    <a href="#about"
+                        class="text-dark-secondary hover:text-dark-accent transition-colors whitespace-nowrap">About</a>
+                    <a href="#skills"
+                        class="text-dark-secondary hover:text-dark-accent transition-colors whitespace-nowrap">Skills</a>
+                    <a href="#experience"
+                        class="text-dark-secondary hover:text-dark-accent transition-colors whitespace-nowrap">Experience</a>
+                    <a href="#projects"
+                        class="hidden sm:block text-dark-secondary hover:text-dark-accent transition-colors whitespace-nowrap">Projects</a>
+                </div>
+
+                <a href="#contact"
+                    class="hidden md:block px-4 py-2 bg-dark-accent text-white rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap">Contact</a>
+
+                <button id="theme-toggle"
+                    class="p-2 rounded-lg bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 hover:border-dark-accent transition-all shrink-0">
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden" id="moon-icon"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block" id="sun-icon"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="relative z-10">
+        <!-- Hero Section -->
+        <section id="hero" class="relative min-h-screen flex items-center pt-20 px-6 scroll-mt-20 overflow-hidden z-10">
+            <!-- Animation Background -->
+            <canvas id="hero-canvas" class="absolute inset-0 opacity-40"></canvas>
+
+            <div class="relative z-10 max-w-4xl mx-auto">
+                <div class="mb-6 animate-in">
+                    <span
+                        class="px-3 py-1 text-xs font-bold tracking-widest uppercase bg-dark-accent/10 text-dark-accent rounded-full border border-dark-accent/20">
+                        Senior GCP Data Engineer
+                    </span>
+                </div>
+                <h1 class="text-4xl md:text-7xl font-bold mb-6 text-light-text dark:text-dark-text leading-tight animate-in break-words"
+                    style="animation-delay: 100ms">
+                    Building Scalable <br />
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
+                        Data Infrastructures
+                    </span>
+                    at Enterprise Scale.
+                </h1>
+                <p class="text-lg md:text-xl text-dark-secondary dark:text-dark-secondary max-w-2xl mb-10 animate-in"
+                    style="animation-delay: 200ms">
+                    Product-driven Data Engineer with 6+ years of experience specializing in BigQuery, Cloud Run, and
+                    Agentic AI architectures. Transforming complex data challenges into cost-efficient, GCP-native
+                    solutions.
+                </p>
+                <div class="flex flex-wrap gap-4 animate-in" style="animation-delay: 300ms">
+                    <a href="mailto:ajithkumargcp@gmail.com"
+                        class="px-8 py-4 bg-dark-accent text-dark-text dark:text-white font-semibold rounded-xl hover:shadow-glow transition-all flex items-center">
+                        Let's Talk
+                        <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/mjajithkumar" target="_blank"
+                        class="px-8 py-4 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 text-light-text dark:text-dark-text font-semibold rounded-xl hover:border-dark-accent transition-all flex items-center">
+                        LinkedIn
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-32 px-6 scroll-mt-20">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <div class="relative animate-on-scroll">
+                        <div class="absolute -inset-4 bg-dark-accent/20 blur-3xl rounded-full"></div>
+                        <div
+                            class="relative bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 p-8 rounded-2xl shadow-2xl">
+                            <div class="flex items-center space-x-4 mb-6">
+                                <div class="w-12 h-12 bg-dark-accent rounded-lg flex items-center justify-center">
+                                    <i data-lucide="user" class="text-white w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-light-text dark:text-dark-text">Ajithkumar J</h3>
+                                    <p class="text-light-secondary dark:text-dark-secondary text-sm">GCP Certified Data
+                                        Engineer</p>
+                                </div>
+                            </div>
+                            <p class="text-light-secondary dark:text-dark-secondary">
+                                I am a Product Owner and Senior Data Engineer at Ford Motor Company, where I design
+                                and own critical data migration frameworks. My focus is on replacing expensive
+                                legacy systems with high-performance, GCP-native alternatives like Workflows and
+                                BigQuery.
+                            </p>
+                            <p class="text-light-secondary dark:text-dark-secondary">
+                                With 6+ years in the data ecosystem, I've moved <span
+                                    class="text-light-text dark:text-dark-text font-bold border-b-2 border-dark-accent">100+
+                                    TB</span> of
+                                data and reduced cloud
+                                costs by <span
+                                    class="text-light-text dark:text-dark-text font-bold border-b-2 border-green-500">60%</span>
+                                through strategic architectural shifts.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="animate-on-scroll">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-light-text dark:text-dark-text">Mastering the
+                        <span class="text-dark-accent">Cloud</span> Data Lifecycle.
+                    </h2>
+                    <div class="space-y-8">
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 p-2 bg-blue-500/10 text-blue-500 rounded-lg">
+                                <i data-lucide="database" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-light-text dark:text-dark-text font-semibold mb-1">Architecture First
+                                </h4>
+                                <p class="text-dark-secondary text-sm">Designing modular ELT platforms that scale
+                                    horizontally without compromising on performance or reliability.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 p-2 bg-emerald-500/10 text-emerald-500 rounded-lg">
+                                <i data-lucide="zap" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-light-text dark:text-dark-text font-semibold mb-1">Cost Optimization
+                                </h4>
+                                <p class="text-dark-secondary text-sm">Driving efficiency by leveraging Cloud Run
+                                    and Workflows over heavy-duty Composer environments.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 p-2 bg-purple-500/10 text-purple-500 rounded-lg">
+                                <i data-lucide="cpu" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-light-text dark:text-dark-text font-semibold mb-1">Agentic AI</h4>
+                                <p class="text-dark-secondary text-sm">Empowering data pipelines with Gemini-powered
+                                    multi-agent systems for automated validation and code generation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="relative py-32 px-6 bg-light-bg/50 dark:bg-dark-surface/30 scroll-mt-20 z-10">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-16 text-center animate-on-scroll">
+                    <h2 class="text-3xl md:text-4xl font-bold text-light-text dark:text-dark-text mb-4">Expertise <span
+                            class="text-dark-accent">&</span> Tech Stack</h2>
+                    <p class="text-dark-secondary text-lg max-w-2xl mx-auto">Categorized skills covering the entire
+                        modern data engineering and AI ecosystem on Google Cloud.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div
+                        class="p-8 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-2xl animate-on-scroll hover:border-dark-accent/50 transition-all">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <img src="https://img.icons8.com/color/48/google-cloud.png" alt="Google Cloud"
+                                class="w-8 h-8 shrink-0">
+                            <h3 class="text-xl font-bold text-light-text dark:text-dark-text">Google Cloud</h3>
+                        </div>
+                        <ul class="space-y-3 text-dark-secondary text-sm">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
+                                BigQuery (Optimization & Analytics)</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                                Cloud Run & Workflows (Orchestration)</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+                                Pub/Sub & Eventarc</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-3"></span>
+                                Vertex AI & Cloud Build</li>
+                        </ul>
+                    </div>
+                    <div
+                        class="p-8 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-2xl animate-on-scroll hover:border-purple-500/50 transition-all">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <i data-lucide="brain-circuit" class="text-purple-500 w-8 h-8"></i>
+                            <h3 class="text-xl font-bold text-light-text dark:text-dark-text">Agentic AI</h3>
+                        </div>
+                        <ul class="space-y-3 text-dark-secondary text-sm">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                                Vertex AI & Gemini Pro</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
+                                Google ADK & LangChain</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-pink-500 rounded-full mr-3"></span>
+                                Prompt Engineering</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-violet-500 rounded-full mr-3"></span>
+                                Multi-Agent Architectures</li>
+                        </ul>
+                    </div>
+                    <div
+                        class="p-8 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-2xl animate-on-scroll hover:border-emerald-500/50 transition-all">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <i data-lucide="git-branch" class="text-emerald-500 w-8 h-8"></i>
+                            <h3 class="text-xl font-bold text-light-text dark:text-dark-text">DevOps & Infra</h3>
+                        </div>
+                        <ul class="space-y-3 text-dark-secondary text-sm">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-emerald-500 rounded-full mr-3"></span>
+                                Terraform (IaC)</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-teal-500 rounded-full mr-3"></span>
+                                CI/CD (Cloud Build, Tekton)</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                                Docker & Kubernetes</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-lime-500 rounded-full mr-3"></span>
+                                SonarQube & Checkmarx</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="py-32 px-6 scroll-mt-20">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-16 animate-on-scroll">
+                    <h2 class="text-3xl md:text-4xl font-bold text-light-text dark:text-dark-text mb-4">Professional
+                        <span class="text-dark-accent">Journey</span>
+                    </h2>
+                    <p class="text-dark-secondary">6+ years of driving data innovation across global leaders.</p>
+                </div>
+
+                <div class="space-y-12">
+                    <div class="relative pl-8 border-l-2 border-dark-accent animate-on-scroll">
+                        <div class="absolute w-4 h-4 bg-dark-accent rounded-full -left-[9px] top-0 shadow-glow"></div>
+                        <div class="mb-4">
+                            <span class="text-xs font-bold text-dark-accent uppercase tracking-widest">Aug 2021 –
+                                Present</span>
+                            <h3 class="text-2xl font-bold text-light-text dark:text-dark-text mt-1 flex items-center">
+                                <i data-lucide="cloud" class="text-dark-accent w-6 h-6 mr-2"></i>
+                                GCP Data Engineer | Product Owner
+                            </h3>
+                            <p class="text-dark-secondary font-medium">Ford Motor Company</p>
+                        </div>
+                        <ul class="space-y-3 text-dark-secondary text-sm">
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-dark-accent mr-3 mt-1 shrink-0"></i>
+                                <span>Served as Product Owner for a critical data engineering module, driving end-to-end
+                                    ownership of ELT pipeline development and production operations.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-dark-accent mr-3 mt-1 shrink-0"></i>
+                                <span>Designed and developed a data integration framework handling multiple upstream and
+                                    downstream systems, integrating both API based and file based batch data workflows
+                                    across the GCP ecosystem.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-dark-accent mr-3 mt-1 shrink-0"></i>
+                                <span>Designed and delivered a reusable data migration framework that migrated <span
+                                        class="text-dark-accent font-bold">100+ TB</span>
+                                    of data from Oracle to BigQuery with zero data loss and <span
+                                        class="text-green-500 font-bold">60% cost reduction</span> after
+                                    replacing Apache Airflow (Cloud Composer) with GCP Workflows.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-dark-accent mr-3 mt-1 shrink-0"></i>
+                                <span>Built automated CI/CD pipelines using Cloud Build and Tekton for containerized
+                                    deployments, and implemented Infrastructure as Code (IaC) with Terraform for
+                                    provisioning and managing GCP resources.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-dark-accent mr-3 mt-1 shrink-0"></i>
+                                <span>Utilised security compliant services like FOSSA, Checkmarx, and SonarQube to
+                                    ensure code quality, security vulnerability scanning, and compliance with
+                                    organisational standards.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="relative pl-8 border-l-2 border-dark-accent/30 animate-on-scroll">
+                        <div
+                            class="absolute w-4 h-4 bg-light-surface dark:bg-dark-surface border-2 border-dark-accent/30 rounded-full -left-[9px] top-0">
+                        </div>
+                        <div class="mb-4">
+                            <span class="text-xs font-bold text-dark-secondary uppercase tracking-widest">Mar 2021 – Aug
+                                2021</span>
+                            <h3 class="text-2xl font-bold text-light-text dark:text-dark-text mt-1">BigQuery Developer
+                            </h3>
+                            <p class="text-dark-secondary font-medium">Tatvic Analytics</p>
+                        </div>
+                        <ul class="space-y-3 text-dark-secondary text-sm">
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-dark-secondary mr-3 mt-1 shrink-0"></i>
+                                <span>Built and optimised Google Analytics to BigQuery pipelines, reducing query costs
+                                    by 20% and improving report generation speed by 40%.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-dark-secondary mr-3 mt-1 shrink-0"></i>
+                                <span>Developed advanced SQL queries with CTEs, aggregate and window functions to
+                                    generate client-ready marketing performance dashboards.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-dark-secondary mr-3 mt-1 shrink-0"></i>
+                                <span>Implemented and optimised views and materialized views to precompute long running
+                                    queries, significantly reducing query cost.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="relative pl-8 border-l-2 border-dark-accent/30 animate-on-scroll">
+                        <div
+                            class="absolute w-4 h-4 bg-light-surface dark:bg-dark-surface border-2 border-dark-accent/30 rounded-full -left-[9px] top-0">
+                        </div>
+                        <div class="mb-4">
+                            <span class="text-xs font-bold text-dark-secondary uppercase tracking-widest">Oct 2019 – Feb
+                                2021</span>
+                            <h3 class="text-2xl font-bold text-light-text dark:text-dark-text mt-1">Junior Developer
+                            </h3>
+                            <p class="text-dark-secondary font-medium">EXL Service</p>
+                        </div>
+                        <ul class="space-y-3 text-dark-secondary text-sm">
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-dark-secondary mr-3 mt-1 shrink-0"></i>
+                                <span>Transformed legacy Oracle SQL scripts to BigQuery-compatible queries, reducing
+                                    execution time by 30% through syntax optimization and query tuning.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-dark-secondary mr-3 mt-1 shrink-0"></i>
+                                <span>Performed Oracle-to-BigQuery data type conversions, validating precision and
+                                    consistency across millions of records.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-dark-secondary mr-3 mt-1 shrink-0"></i>
+                                <span>Partnered with the Business Analytics team to design 20+ complex queries for
+                                    reporting dashboards, directly enabling leadership with faster insights.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-32 px-6 bg-light-bg/50 dark:bg-dark-surface/30 scroll-mt-20">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 animate-on-scroll">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-light-text dark:text-dark-text mb-4">Innovation
+                            <span class="text-dark-accent">Spotlight</span>
+                        </h2>
+                        <p class="text-dark-secondary">Enterprise-grade frameworks and AI-powered solutions.</p>
+                    </div>
+                    <a href="#" class="mt-4 md:mt-0 text-dark-accent font-semibold flex items-center hover:underline">
+                        View all projects <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </a>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div
+                        class="group bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden hover:border-dark-accent/50 transition-all animate-on-scroll">
+                        <div class="p-8">
+                            <h3
+                                class="text-2xl font-bold text-light-text dark:text-dark-text mb-4 group-hover:text-dark-accent transition-colors">
+                                Agentic AI – LLM Powered ETL Generator</h3>
+                            <p class="text-dark-secondary text-sm mb-6">Generated ETL pipeline code from JSON using
+                                Vertex AI and Gemini. Implemented multi-agent validation.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-gray-800 text-[10px] text-dark-secondary rounded">Vertex
+                                    AI</span>
+                                <span
+                                    class="px-2 py-1 bg-gray-800 text-[10px] text-dark-secondary rounded">Gemini</span>
+                                <span
+                                    class="px-2 py-1 bg-gray-800 text-[10px] text-dark-secondary rounded">BigQuery</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden hover:border-dark-accent/50 transition-all animate-on-scroll">
+                        <div class="p-8">
+                            <h3
+                                class="text-2xl font-bold text-light-text dark:text-dark-text mb-4 group-hover:text-dark-accent transition-colors">
+                                Plug-and-Play Integration Framework</h3>
+                            <p class="text-dark-secondary text-sm mb-6">Modular API and batch data pipelines using Cloud
+                                Run and Workflows with centralized auditing.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-2 py-1 bg-gray-800 text-[10px] text-dark-secondary rounded">Workflows</span>
+                                <span class="px-2 py-1 bg-gray-800 text-[10px] text-dark-secondary rounded">Cloud
+                                    Run</span>
+                                <span
+                                    class="px-2 py-1 bg-gray-800 text-[10px] text-dark-secondary rounded">Terraform</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certifications & Education -->
+        <section class="py-32 px-6">
+            <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
+                <div class="animate-on-scroll">
+                    <h2 class="text-3xl font-bold text-light-text dark:text-dark-text mb-8 flex items-center">
+                        <i data-lucide="award" class="text-yellow-500 mr-4"></i> Certifications
+                    </h2>
+                    <div class="space-y-4">
+                        <div
+                            class="p-6 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-xl flex items-center justify-between group hover:border-yellow-500/50 transition-all">
+                            <div class="flex items-center space-x-4">
+                                <i data-lucide="cloud" class="text-blue-500 w-8 h-8 shrink-0"></i>
+                                <div>
+                                    <h4 class="text-light-text dark:text-dark-text font-bold">Google
+                                        Professional Data
+                                        Engineer</h4>
+                                    <p class="text-light-secondary dark:text-dark-secondary text-sm">Google Cloud
+                                        Certified</p>
+                                </div>
+                            </div>
+                            <i data-lucide="external-link"
+                                class="text-dark-secondary group-hover:text-yellow-500 transition-colors w-5 h-5"></i>
+                        </div>
+                        <div
+                            class="p-6 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-xl flex items-center justify-between group hover:border-yellow-500/50 transition-all">
+                            <div class="flex items-center space-x-4">
+                                <i data-lucide="cloud" class="text-blue-500 w-8 h-8 shrink-0"></i>
+                                <div>
+                                    <h4 class="text-light-text dark:text-dark-text font-bold">Associate
+                                        Cloud Engineer</h4>
+                                    <p class="text-light-secondary dark:text-dark-secondary text-sm">Google Cloud
+                                        Certified</p>
+                                </div>
+                            </div>
+                            <i data-lucide="external-link"
+                                class="text-dark-secondary group-hover:text-yellow-500 transition-colors w-5 h-5"></i>
+                        </div>
+                        <div
+                            class="p-6 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-xl flex items-center justify-between group hover:border-yellow-500/50 transition-all">
+                            <div class="flex items-center space-x-4">
+                                <i data-lucide="cloud" class="text-blue-500 w-8 h-8 shrink-0"></i>
+                                <div>
+                                    <h4 class="text-light-text dark:text-dark-text font-bold">Google
+                                        Cloud Digital Leader
+                                    </h4>
+                                    <p class="text-light-secondary dark:text-dark-secondary text-sm">Google Cloud
+                                        Certified</p>
+                                </div>
+                            </div>
+                            <i data-lucide="external-link"
+                                class="text-dark-secondary group-hover:text-yellow-500 transition-colors w-5 h-5"></i>
+                        </div>
+                        <div
+                            class="p-6 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-xl flex items-center justify-between group hover:border-yellow-500/50 transition-all">
+                            <div>
+                                <h4 class="text-light-text dark:text-dark-text font-bold">Google Prompting Essentials
+                                </h4>
+                                <p class="text-light-secondary dark:text-dark-secondary text-sm">Coursera / Google</p>
+                            </div>
+                            <i data-lucide="external-link"
+                                class="text-dark-secondary group-hover:text-yellow-500 transition-colors w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="animate-on-scroll">
+                    <h2 class="text-3xl font-bold text-light-text dark:text-dark-text mb-8 flex items-center">
+                        <i data-lucide="graduation-cap" class="text-blue-500 mr-4"></i> Education
+                    </h2>
+                    <div
+                        class="p-6 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-xl">
+                        <h4 class="text-light-text dark:text-dark-text font-bold text-lg">Bachelor of Mechanical
+                            Engineering</h4>
+                        <p class="text-light-secondary dark:text-dark-secondary">Anna University | 2013 – 2017</p>
+                        <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+                            <h5 class="text-light-text dark:text-dark-text font-semibold mb-3">Interests</h5>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-3 py-1 bg-gray-800 text-dark-secondary text-xs rounded-full">Traveling</span>
+                                <span class="px-3 py-1 bg-gray-800 text-dark-secondary text-xs rounded-full">Reading
+                                    Books</span>
+                                <span class="px-3 py-1 bg-gray-800 text-dark-secondary text-xs rounded-full">Writing
+                                    Poems</span>
+                                <span class="px-3 py-1 bg-gray-800 text-dark-secondary text-xs rounded-full">Mentoring
+                                    Students</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-32 px-6 scroll-mt-20">
+            <div class="max-w-4xl mx-auto text-center animate-on-scroll">
+                <h2 class="text-4xl md:text-5xl font-bold text-light-text dark:text-dark-text mb-8">Let's build the
+                    <span class="text-dark-accent">Future</span> together.
+                </h2>
+                <div class="flex flex-col items-center gap-8">
+                    <a href="mailto:ajithkumargcp@gmail.com"
+                        class="px-6 md:px-10 py-5 bg-dark-accent text-white font-bold rounded-2xl shadow-glow hover:scale-105 transition-all text-base md:text-xl break-all">
+                        ajithkumargcp@gmail.com
+                    </a>
+                    <div class="flex items-center space-x-4">
+                        <a href="tel:+918838190799"
+                            class="p-4 bg-light-surface dark:bg-dark-surface border border-gray-200 dark:border-gray-800 rounded-xl text-light-text dark:text-dark-text hover:border-dark-accent transition-all flex items-center">
+                            <i data-lucide="phone" class="w-6 h-6 mr-2"></i> +91 8838190799
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-12 border-t border-gray-800 px-6 relative z-10">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm text-dark-secondary">
+            <p>© 2024 Ajithkumar J | GCP Data Engineer</p>
+            <div class="flex space-x-8">
+                <a href="https://linkedin.com/in/mjajithkumar" target="_blank"
+                    class="hover:text-white transition-colors">LinkedIn</a>
+                <a href="#hero" class="hover:text-white transition-colors flex items-center">
+                    Scroll to Top <i data-lucide="arrow-up" class="w-4 h-4 ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./src/main.js"></script>
+    <script src="./src/three-scene.js"></script>
+    <script src="./src/gsap-animations.js"></script>
+</body>
+
+</html>
