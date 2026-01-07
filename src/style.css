@@ -73,6 +73,15 @@ section {
     z-index: 1;
     pointer-events: none;
     /* Let clicks pass through to content */
+    will-change: transform;
+}
+
+.animate-on-scroll,
+#skills .p-8,
+#projects .group,
+.p-6.bg-light-surface,
+section h2 {
+    will-change: transform, opacity;
 }
 
 /* Three.js canvas should handle mouse events via window, so pointer-events none is fine for the canvas element itself */
