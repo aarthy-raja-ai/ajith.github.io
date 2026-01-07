@@ -1,6 +1,17 @@
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
+// Global ScrollTrigger Configuration for Mobile
+ScrollTrigger.config({
+    limitCallbacks: true,
+    ignoreMobileResize: true // Prevent jumpy behavior on mobile address bar hide/show
+});
+
+// Handle mobile scroll normalization
+if (ScrollTrigger.isTouch) {
+    ScrollTrigger.normalizeScroll(true);
+}
+
 class PortfolioAnimations {
     constructor() {
         console.log("Initializing Portfolio Animations...");
@@ -12,7 +23,19 @@ class PortfolioAnimations {
 
         // Refresh ScrollTrigger after a short delay to ensure layout is settled
         window.addEventListener('load', () => {
-            setTimeout(() => ScrollTrigger.refresh(), 500);
+            setTimeout(() => {
+                ScrollTrigger.refresh();
+                console.log("ScrollTrigger refreshed after load");
+            }, 500);
+        });
+
+        // Global resize debounced refresh
+        let resizeTimer;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 250);
         });
     }
 
